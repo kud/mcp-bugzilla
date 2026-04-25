@@ -4,7 +4,7 @@ All notable changes to this project are documented here.
 
 ---
 
-## [Unreleased] — 2026-04-25
+## [1.1.2] — 2026-04-25
 
 ### Bug Fixes
 
