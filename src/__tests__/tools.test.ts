@@ -5,6 +5,7 @@ vi.hoisted(() => {
 })
 
 import {
+  createAttachment,
   createBug,
   createComment,
   err,
@@ -13,12 +14,16 @@ import {
   getBugFields,
   getBugHistory,
   getComments,
+  getFlagTypes,
   getProduct,
   getProducts,
   getUser,
   ok,
   searchBugs,
+  searchCommentTags,
+  updateAttachment,
   updateBug,
+  updateCommentTags,
 } from "../index.js"
 
 const mockFetch = vi.fn()
@@ -298,6 +303,123 @@ describe("getBugFields", () => {
   it("returns error on failure", async () => {
     mockFetch.mockReturnValue(failRes())
     const result = await getBugFields({})
+    expect(text(result)).toContain("Error:")
+  })
+})
+
+// ─── Attachments (create/update) ───
+
+describe("createAttachment", () => {
+  it("returns attachment ids on success", async () => {
+    mockFetch.mockReturnValue(res({ ids: [101] }))
+    const result = await createAttachment({
+      id: "1",
+      data: "aGVsbG8=",
+      file_name: "fix.patch",
+      summary: "My patch",
+      content_type: "text/plain",
+    })
+    expect(text(result)).toContain("101")
+    expect(mockFetch.mock.calls[0][0]).toContain("/bug/1/attachment")
+    expect(mockFetch.mock.calls[0][1]?.method).toBe("POST")
+  })
+
+  it("returns error on failure", async () => {
+    mockFetch.mockReturnValue(failRes())
+    const result = await createAttachment({
+      id: "1",
+      data: "aGVsbG8=",
+      file_name: "fix.patch",
+      summary: "My patch",
+      content_type: "text/plain",
+    })
+    expect(text(result)).toContain("Error:")
+  })
+})
+
+describe("updateAttachment", () => {
+  it("marks attachment obsolete on success", async () => {
+    mockFetch.mockReturnValue(res({ attachments: [{ id: 101, changes: {} }] }))
+    const result = await updateAttachment({
+      attachment_id: "101",
+      is_obsolete: true,
+    })
+    expect(text(result)).toContain("changes")
+    expect(mockFetch.mock.calls[0][1]?.method).toBe("PUT")
+    expect(mockFetch.mock.calls[0][0]).toContain("/bug/attachment/101")
+  })
+
+  it("returns error on failure", async () => {
+    mockFetch.mockReturnValue(failRes())
+    const result = await updateAttachment({ attachment_id: "101" })
+    expect(text(result)).toContain("Error:")
+  })
+})
+
+// ─── Flag Types ───
+
+describe("getFlagTypes", () => {
+  it("returns bug and attachment flags for a product", async () => {
+    mockFetch.mockReturnValue(
+      res({ bug: [{ name: "needinfo" }], attachment: [{ name: "review" }] }),
+    )
+    const result = await getFlagTypes({ product: "Firefox" })
+    expect(text(result)).toContain("needinfo")
+    expect(text(result)).toContain("review")
+    expect(mockFetch.mock.calls[0][0]).toContain("/flag_type/Firefox")
+  })
+
+  it("narrows by component when provided", async () => {
+    mockFetch.mockReturnValue(res({ bug: [], attachment: [] }))
+    await getFlagTypes({ product: "Firefox", component: "General" })
+    expect(mockFetch.mock.calls[0][0]).toContain("/flag_type/Firefox/General")
+  })
+
+  it("returns error on failure", async () => {
+    mockFetch.mockReturnValue(failRes())
+    const result = await getFlagTypes({ product: "Firefox" })
+    expect(text(result)).toContain("Error:")
+  })
+})
+
+// ─── Comment Tags ───
+
+describe("searchCommentTags", () => {
+  it("returns matching tags on success", async () => {
+    mockFetch.mockReturnValue(res(["spam", "spammy"]))
+    const result = await searchCommentTags({ query: "spa" })
+    expect(text(result)).toContain("spam")
+    expect(mockFetch.mock.calls[0][0]).toContain("/bug/comment/tags/spa")
+  })
+
+  it("appends limit param when provided", async () => {
+    mockFetch.mockReturnValue(res([]))
+    await searchCommentTags({ query: "need", limit: 5 })
+    expect(mockFetch.mock.calls[0][0]).toContain("limit=5")
+  })
+
+  it("returns error on failure", async () => {
+    mockFetch.mockReturnValue(failRes())
+    const result = await searchCommentTags({ query: "need" })
+    expect(text(result)).toContain("Error:")
+  })
+})
+
+describe("updateCommentTags", () => {
+  it("returns updated tags on success", async () => {
+    mockFetch.mockReturnValue(res(["spam"]))
+    const result = await updateCommentTags({ comment_id: "75", add: ["spam"] })
+    expect(text(result)).toContain("spam")
+    expect(mockFetch.mock.calls[0][1]?.method).toBe("PUT")
+    expect(mockFetch.mock.calls[0][0]).toContain("/bug/comment/75/tags")
+  })
+
+  it("returns error on failure", async () => {
+    mockFetch.mockReturnValue(failRes())
+    const result = await updateCommentTags({
+      comment_id: "75",
+      remove: ["spam"],
+    })
     expect(text(result)).toContain("Error:")
   })
 })

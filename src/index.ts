@@ -154,6 +154,35 @@ export const createComment = async (params: {
   return data?.id ? ok({ id: data.id }) : err("failed to create comment")
 }
 
+export const searchCommentTags = async ({
+  query,
+  limit,
+}: {
+  query: string
+  limit?: number
+}) => {
+  const qs = limit ? `?limit=${limit}` : ""
+  const data = await apiFetch<string[]>(
+    `/bug/comment/tags/${encodeURIComponent(query)}${qs}`,
+  )
+  return data ? ok(data) : err("failed to search comment tags")
+}
+
+export const updateCommentTags = async (params: {
+  comment_id: string
+  add?: string[]
+  remove?: string[]
+}) => {
+  if (!API_KEY)
+    return err("MCP_BUGZILLA_API_KEY is required to update comment tags")
+  const { comment_id, ...body } = params
+  const data = await apiFetch<string[]>(`/bug/comment/${comment_id}/tags`, {
+    method: "PUT",
+    body: JSON.stringify(body),
+  })
+  return data ? ok(data) : err(`failed to update tags on comment ${comment_id}`)
+}
+
 // ─── Attachments ───
 
 export const getAttachments = async ({ id }: { id: string }) => {
@@ -163,6 +192,71 @@ export const getAttachments = async ({ id }: { id: string }) => {
   return data?.bugs
     ? ok(data.bugs[id])
     : err(`failed to get attachments for ${id}`)
+}
+
+export const createAttachment = async (params: {
+  id: string
+  data: string
+  file_name: string
+  summary: string
+  content_type: string
+  comment?: string
+  is_patch?: boolean
+  is_private?: boolean
+  flags?: unknown[]
+}) => {
+  if (!API_KEY)
+    return err("MCP_BUGZILLA_API_KEY is required to create attachments")
+  const { id, ...body } = params
+  const result = await apiFetch<{ ids: number[] }>(`/bug/${id}/attachment`, {
+    method: "POST",
+    body: JSON.stringify({ ...body, ids: [id] }),
+  })
+  return result?.ids
+    ? ok({ ids: result.ids })
+    : err("failed to create attachment")
+}
+
+export const updateAttachment = async (params: {
+  attachment_id: string
+  file_name?: string
+  summary?: string
+  content_type?: string
+  is_patch?: boolean
+  is_private?: boolean
+  is_obsolete?: boolean
+  comment?: string
+  flags?: unknown[]
+}) => {
+  if (!API_KEY)
+    return err("MCP_BUGZILLA_API_KEY is required to update attachments")
+  const { attachment_id, ...fields } = params
+  const data = await apiFetch<{ attachments: unknown[] }>(
+    `/bug/attachment/${attachment_id}`,
+    {
+      method: "PUT",
+      body: JSON.stringify({ ids: [attachment_id], ...fields }),
+    },
+  )
+  return data?.attachments
+    ? ok(data.attachments)
+    : err(`failed to update attachment ${attachment_id}`)
+}
+
+// ─── Flag Types ───
+
+export const getFlagTypes = async ({
+  product,
+  component,
+}: {
+  product: string
+  component?: string
+}) => {
+  const path = component
+    ? `/flag_type/${encodeURIComponent(product)}/${encodeURIComponent(component)}`
+    : `/flag_type/${encodeURIComponent(product)}`
+  const data = await apiFetch<{ bug: unknown[]; attachment: unknown[] }>(path)
+  return data ? ok(data) : err(`failed to fetch flag types for ${product}`)
 }
 
 // ─── Products ───
@@ -442,6 +536,131 @@ server.registerTool(
     },
   },
   getBugFields,
+)
+
+server.registerTool(
+  "create_attachment",
+  {
+    description:
+      "Upload a patch or file to a bug. data must be base64-encoded. Requires MCP_BUGZILLA_API_KEY.",
+    inputSchema: {
+      id: z.string().describe("Bug ID to attach to"),
+      data: z.string().describe("Base64-encoded file content"),
+      file_name: z.string().describe("Display filename (e.g. fix.patch)"),
+      summary: z.string().describe("Brief description of the attachment"),
+      content_type: z
+        .string()
+        .describe("MIME type (e.g. text/plain, application/octet-stream)"),
+      comment: z
+        .string()
+        .optional()
+        .describe("Comment to post with the attachment"),
+      is_patch: z
+        .boolean()
+        .optional()
+        .default(false)
+        .describe("Mark as a code patch"),
+      is_private: z
+        .boolean()
+        .optional()
+        .default(false)
+        .describe("Private attachment"),
+      flags: z
+        .array(
+          z.object({
+            name: z.string(),
+            status: z.string(),
+            requestee: z.string().optional(),
+          }),
+        )
+        .optional()
+        .describe("Flags to set (e.g. review?)"),
+    },
+  },
+  createAttachment,
+)
+
+server.registerTool(
+  "update_attachment",
+  {
+    description:
+      "Update an existing attachment — rename, mark obsolete, change flags. Requires MCP_BUGZILLA_API_KEY.",
+    inputSchema: {
+      attachment_id: z.string().describe("Attachment ID to update"),
+      file_name: z.string().optional().describe("New filename"),
+      summary: z.string().optional().describe("New description"),
+      content_type: z.string().optional().describe("New MIME type"),
+      is_patch: z.boolean().optional().describe("Set patch status"),
+      is_private: z.boolean().optional().describe("Set private status"),
+      is_obsolete: z
+        .boolean()
+        .optional()
+        .describe("Mark as obsolete (superseded)"),
+      comment: z
+        .string()
+        .optional()
+        .describe("Comment to post with the update"),
+      flags: z
+        .array(
+          z.object({
+            name: z.string(),
+            status: z.string(),
+            requestee: z.string().optional(),
+          }),
+        )
+        .optional()
+        .describe("Flag changes"),
+    },
+  },
+  updateAttachment,
+)
+
+server.registerTool(
+  "get_flag_types",
+  {
+    description:
+      "List available flags for a product/component (e.g. review, needinfo, approval-mozilla-beta)",
+    inputSchema: {
+      product: z.string().describe("Product name (e.g. Firefox)"),
+      component: z
+        .string()
+        .optional()
+        .describe("Component name to narrow results"),
+    },
+  },
+  getFlagTypes,
+)
+
+server.registerTool(
+  "search_comment_tags",
+  {
+    description: "Search for comment tag names by substring",
+    inputSchema: {
+      query: z.string().describe("Substring to search for in tag names"),
+      limit: z
+        .number()
+        .int()
+        .min(1)
+        .optional()
+        .default(10)
+        .describe("Max results"),
+    },
+  },
+  searchCommentTags,
+)
+
+server.registerTool(
+  "update_comment_tags",
+  {
+    description:
+      "Add or remove tags on a comment (e.g. mark as spam or needinfo). Requires MCP_BUGZILLA_API_KEY.",
+    inputSchema: {
+      comment_id: z.string().describe("Comment ID to tag"),
+      add: z.array(z.string()).optional().describe("Tags to add"),
+      remove: z.array(z.string()).optional().describe("Tags to remove"),
+    },
+  },
+  updateCommentTags,
 )
 
 const main = async () => {
