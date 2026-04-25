@@ -44,7 +44,7 @@
   "bugs": {
     "url": "https://github.com/kud/mcp-bugzilla/issues"
   },
-  "homepage": "https://github.com/kud/mcp-bugzilla#readme",
+  "homepage": "https://kud.github.io/mcp-bugzilla",
   "engines": {
     "node": ">=20.0.0"
   },

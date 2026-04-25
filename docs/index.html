@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>mcp-bugzilla — Bugzilla MCP Server</title>
+    <meta
+      name="description"
+      content="MCP server for Bugzilla — search, discuss, and manage Firefox/Mozilla bugs via the Bugzilla REST API."
+    />
+    <meta property="og:title" content="mcp-bugzilla — Bugzilla MCP Server" />
+    <meta
+      property="og:description"
+      content="17 MCP tools to search, discuss, and manage Firefox/Mozilla bugs via the Bugzilla REST API."
+    />
+    <meta property="og:url" content="https://kud.github.io/mcp-bugzilla" />
+    <meta name="theme-color" content="#7c3aed" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <!-- Nav -->
+    <nav id="nav">
+      <div class="nav-logo">
+        mcp-bugzilla
+        <span class="badge">v1.0.0</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#quickstart">Quick Start</a></li>
+        <li><a href="#tools">MCP Tools</a></li>
+        <li><a href="#config">Configuration</a></li>
+        <li>
+          <a
+            class="nav-cta"
+            href="https://github.com/kud/mcp-bugzilla"
+            target="_blank"
+            rel="noopener"
+            >GitHub</a
+          >
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero" id="home">
+      <div class="hero-inner">
+        <div class="hero-badge">MCP Server &bull; v1.0.0 &bull; MIT</div>
+
+        <h1>Bugzilla, inside your AI</h1>
+
+        <p class="hero-desc">
+          Search, discuss, and manage Firefox &amp; Mozilla bugs directly from
+          Claude — 17 MCP tools covering the full Bugzilla REST API, no
+          copy-pasting required.
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn-primary" href="#quickstart">Get Started</a>
+          <a
+            class="btn-secondary"
+            href="https://github.com/kud/mcp-bugzilla"
+            target="_blank"
+            rel="noopener"
+            >View on GitHub</a
+          >
+          <a
+            class="btn-secondary"
+            href="https://www.npmjs.com/package/@kud/mcp-bugzilla"
+            target="_blank"
+            rel="noopener"
+            >npm</a
+          >
+        </div>
+
+        <div class="hero-command">
+          <span class="cmd-prefix">$</span>
+          <span class="cmd-text">npx @kud/mcp-bugzilla</span>
+          <button class="copy-btn" data-copy="npx @kud/mcp-bugzilla">
+            Copy
+          </button>
+        </div>
+
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="hero-stat-value">1.0.0</span>
+            <span class="hero-stat-label">Version</span>
+          </div>
+          <div class="hero-stat-sep"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-value">17</span>
+            <span class="hero-stat-label">MCP Tools</span>
+          </div>
+          <div class="hero-stat-sep"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-value">MIT</span>
+            <span class="hero-stat-label">Licence</span>
+          </div>
+          <div class="hero-stat-sep"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-value">Node 20+</span>
+            <span class="hero-stat-label">Runtime</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Features -->
+    <section id="features">
+      <p class="section-label reveal">Features</p>
+      <h2 class="section-title reveal">Everything you need for Bugzilla</h2>
+      <p class="section-desc reveal">
+        Works read-only without credentials. Add an API key to unlock bug
+        creation, comments, and status updates — all from your AI assistant.
+      </p>
+
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon">&#128273;</div>
+          <div class="feature-title">Optional authentication</div>
+          <p class="feature-desc">
+            Read-only access requires no API key. Generate one from Bugzilla
+            preferences to unlock create, update, and comment operations.
+          </p>
+        </div>
+
+        <div class="feature-card reveal">
+          <div class="feature-icon">&#128270;</div>
+          <div class="feature-title">Powerful search</div>
+          <p class="feature-desc">
+            Filter by product, component, status, severity, assignee, or use
+            Bugzilla's quicksearch syntax to find exactly the right bugs.
+          </p>
+        </div>
+
+        <div class="feature-card reveal">
+          <div class="feature-icon">&#128172;</div>
+          <div class="feature-title">Full discussion flow</div>
+          <p class="feature-desc">
+            Read comments, post replies, mark them private, or log work time —
+            the complete comment lifecycle without leaving your editor.
+          </p>
+        </div>
+
+        <div class="feature-card reveal">
+          <div class="feature-icon">&#128204;</div>
+          <div class="feature-title">Attachment handling</div>
+          <p class="feature-desc">
+            List, create, and update attachments on any bug. Inspect patches and
+            test files linked to open Firefox issues.
+          </p>
+        </div>
+
+        <div class="feature-card reveal">
+          <div class="feature-icon">&#129418;</div>
+          <div class="feature-title">Mozilla-first defaults</div>
+          <p class="feature-desc">
+            Defaults to <code>bugzilla.mozilla.org</code> out of the box.
+            Override <code>MCP_BUGZILLA_BASE_URL</code> for any self-hosted
+            Bugzilla instance.
+          </p>
+        </div>
+
+        <div class="feature-card reveal">
+          <div class="feature-icon">&#9889;</div>
+          <div class="feature-title">Zero-install via npx</div>
+          <p class="feature-desc">
+            Add one JSON block to your Claude Desktop config and restart.
+            TypeScript, ESM, Node 20+ — no global installs needed.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Quick Start -->
+    <section id="quickstart">
+      <p class="section-label reveal">Quick Start</p>
+      <h2 class="section-title reveal">Up and running in two minutes</h2>
+      <p class="section-desc reveal">
+        Add the server block to your Claude Desktop config, optionally set your
+        API key, and restart the app.
+      </p>
+
+      <div class="quickstart-steps">
+        <!-- Step 1 -->
+        <div class="qs-step reveal">
+          <div class="qs-num">1</div>
+          <div class="qs-body">
+            <h3>Open your Claude Desktop config</h3>
+            <p>
+              Edit
+              <code
+                >~/Library/Application
+                Support/Claude/claude_desktop_config.json</code
+              >
+              on macOS, or
+              <code>%APPDATA%\Claude\claude_desktop_config.json</code> on
+              Windows.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="qs-step reveal">
+          <div class="qs-num">2</div>
+          <div class="qs-body">
+            <h3>Add the server block</h3>
+            <p>
+              Paste this snippet into your <code>mcpServers</code> object. The
+              <code>env</code> section is optional — omit it for read-only
+              access.
+            </p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <span class="code-block-title">claude_desktop_config.json</span>
+                <button
+                  class="copy-btn"
+                  data-copy='{
+  "mcpServers": {
+    "mcp-bugzilla": {
+      "command": "npx",
+      "args": ["-y", "@kud/mcp-bugzilla"],
+      "env": {
+        "MCP_BUGZILLA_API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}'
+                >
+                  Copy
+                </button>
+              </div>
+              <pre><code>{
+  <span class="token-key">"mcpServers"</span>: {
+    <span class="token-key">"mcp-bugzilla"</span>: {
+      <span class="token-key">"command"</span>: <span class="token-string">"npx"</span>,
+      <span class="token-key">"args"</span>: [<span class="token-string">"-y"</span>, <span class="token-string">"@kud/mcp-bugzilla"</span>],
+      <span class="token-key">"env"</span>: {
+        <span class="token-key">"MCP_BUGZILLA_API_KEY"</span>: <span class="token-string">"your-api-key-here"</span>
+      }
+    }
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="qs-step reveal">
+          <div class="qs-num">3</div>
+          <div class="qs-body">
+            <h3>Or use Claude Code CLI</h3>
+            <p>
+              Register the server from your terminal. Pass <code>-e</code> to
+              include an API key for write access.
+            </p>
+            <div class="code-block">
+              <div class="code-block-header">
+                <span class="code-block-title">Terminal</span>
+                <button
+                  class="copy-btn"
+                  data-copy="claude mcp add mcp-bugzilla -e MCP_BUGZILLA_API_KEY=your-key -- npx -y @kud/mcp-bugzilla"
+                >
+                  Copy
+                </button>
+              </div>
+              <pre><code><span class="token-cmd">claude</span> mcp add mcp-bugzilla \
+  -e MCP_BUGZILLA_API_KEY=your-key \
+  -- npx -y @kud/mcp-bugzilla</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="qs-step reveal">
+          <div class="qs-num">4</div>
+          <div class="qs-body">
+            <h3>Restart and start asking</h3>
+            <p>
+              Restart Claude Desktop (or reload your editor). The 17 Bugzilla
+              tools are now available. Try: <em>"Show me bug 1234567"</em> or
+              <em>"Search for open P1 Firefox crashes"</em>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- MCP Tools Reference -->
+    <section id="tools">
+      <p class="section-label reveal">MCP Tools Reference</p>
+      <h2 class="section-title reveal">17 tools, full API coverage</h2>
+      <p class="section-desc reveal">
+        Read operations work without an API key. Tools marked
+        <span class="tool-badge badge-write">write</span> require
+        <code>MCP_BUGZILLA_API_KEY</code>.
+      </p>
+
+      <div class="tools-table-wrap reveal">
+        <table>
+          <thead>
+            <tr>
+              <th>Tool</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="tool-group-row">
+              <td colspan="2">Bugs</td>
+            </tr>
+            <tr>
+              <td>get_bug</td>
+              <td>
+                Fetch a single bug by ID or alias, including all metadata
+                fields.
+              </td>
+            </tr>
+            <tr>
+              <td>search_bugs</td>
+              <td>
+                Search bugs by product, component, status, assignee, severity,
+                or quicksearch syntax.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                create_bug <span class="tool-badge badge-write">write</span>
+              </td>
+              <td>
+                File a new bug with product, component, summary, description,
+                and optional fields.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                update_bug <span class="tool-badge badge-write">write</span>
+              </td>
+              <td>
+                Update status, resolution, assignee, keywords, CC list, and
+                other fields on an existing bug.
+              </td>
+            </tr>
+            <tr>
+              <td>get_bug_history</td>
+              <td>
+                View the full field-change audit trail for a bug, with
+                timestamps and authors.
+              </td>
+            </tr>
+
+            <tr class="tool-group-row">
+              <td colspan="2">Comments</td>
+            </tr>
+            <tr>
+              <td>get_comments</td>
+              <td>
+                Retrieve all comments on a bug, with an optional
+                <code>new_since</code> date filter.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                create_comment <span class="tool-badge badge-write">write</span>
+              </td>
+              <td>
+                Post a comment, optionally marking it private or logging work
+                time against the bug.
+              </td>
+            </tr>
+            <tr>
+              <td>search_comment_tags</td>
+              <td>
+                Search for comment tags across bugs matching a query string.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                update_comment_tags
+                <span class="tool-badge badge-write">write</span>
+              </td>
+              <td>Add or remove tags on a specific comment.</td>
+            </tr>
+
+            <tr class="tool-group-row">
+              <td colspan="2">Attachments</td>
+            </tr>
+            <tr>
+              <td>get_attachments</td>
+              <td>
+                List all attachments (patches, screenshots, logs) for a bug.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                create_attachment
+                <span class="tool-badge badge-write">write</span>
+              </td>
+              <td>
+                Upload a new attachment to a bug with MIME type, file name, and
+                content.
+              </td>
+            </tr>
+            <tr>
+              <td>
+                update_attachment
+                <span class="tool-badge badge-write">write</span>
+              </td>
+              <td>
+                Update attachment metadata — description, MIME type, or
+                patch/obsolete flags.
+              </td>
+            </tr>
+
+            <tr class="tool-group-row">
+              <td colspan="2">Products</td>
+            </tr>
+            <tr>
+              <td>get_products</td>
+              <td>
+                List accessible, selectable, or enterable products on the
+                Bugzilla instance.
+              </td>
+            </tr>
+            <tr>
+              <td>get_product</td>
+              <td>
+                Get full product details including all components, versions, and
+                milestones.
+              </td>
+            </tr>
+
+            <tr class="tool-group-row">
+              <td colspan="2">Users &amp; Fields</td>
+            </tr>
+            <tr>
+              <td>get_user</td>
+              <td>Look up a Bugzilla user by email address or login name.</td>
+            </tr>
+            <tr>
+              <td>get_bug_fields</td>
+              <td>
+                List all available bug fields and their legal values (e.g. valid
+                severities).
+              </td>
+            </tr>
+            <tr>
+              <td>get_flag_types</td>
+              <td>
+                Retrieve flag types available for a given product and component.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Configuration -->
+    <section id="config">
+      <p class="section-label reveal">Configuration</p>
+      <h2 class="section-title reveal">Two environment variables</h2>
+      <p class="section-desc reveal">
+        Both are optional. The server works read-only with no configuration at
+        all — just add your API key when you need to create or update bugs.
+      </p>
+
+      <div class="config-grid">
+        <div class="config-row reveal">
+          <div>
+            <div class="config-var">MCP_BUGZILLA_API_KEY</div>
+            <p class="config-desc">
+              Your Bugzilla API key. Required for write operations (create bug,
+              post comment, upload attachment, update status). Generate one at
+              <a
+                href="https://bugzilla.mozilla.org/userprefs.cgi?tab=apikey"
+                target="_blank"
+                rel="noopener"
+                >Preferences &rarr; API Keys</a
+              >.
+            </p>
+          </div>
+          <span class="config-optional">Optional</span>
+        </div>
+
+        <div class="config-row reveal">
+          <div>
+            <div class="config-var">MCP_BUGZILLA_BASE_URL</div>
+            <p class="config-desc">
+              Base URL of the Bugzilla REST API. Defaults to
+              <code>https://bugzilla.mozilla.org/rest</code>. Override this to
+              point at any self-hosted Bugzilla instance.
+            </p>
+          </div>
+          <span class="config-optional">Optional</span>
+        </div>
+      </div>
+
+      <div style="margin-top: 2rem" class="reveal">
+        <div class="code-block">
+          <div class="code-block-header">
+            <span class="code-block-title">Verify your API key</span>
+            <button
+              class="copy-btn"
+              data-copy='curl -H "X-BUGZILLA-API-KEY: your-key" https://bugzilla.mozilla.org/rest/whoami'
+            >
+              Copy
+            </button>
+          </div>
+          <pre><code><span class="token-cmd">curl</span> -H <span class="token-string">"X-BUGZILLA-API-KEY: your-key"</span> \
+  https://bugzilla.mozilla.org/rest/whoami</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-links">
+        <a
+          href="https://github.com/kud/mcp-bugzilla"
+          target="_blank"
+          rel="noopener"
+          >GitHub</a
+        >
+        <a
+          href="https://www.npmjs.com/package/@kud/mcp-bugzilla"
+          target="_blank"
+          rel="noopener"
+          >npm</a
+        >
+        <a
+          href="https://github.com/kud/mcp-bugzilla/blob/main/CHANGELOG.md"
+          target="_blank"
+          rel="noopener"
+          >Changelog</a
+        >
+        <a
+          href="https://github.com/kud/mcp-bugzilla/issues"
+          target="_blank"
+          rel="noopener"
+          >Issues</a
+        >
+        <a
+          href="https://bugzilla.readthedocs.io/en/latest/api/"
+          target="_blank"
+          rel="noopener"
+          >Bugzilla API docs</a
+        >
+      </div>
+      <p>
+        @kud/mcp-bugzilla &mdash; MIT licence &mdash; Made for Firefox
+        contributors and the Mozilla community
+      </p>
+    </footer>
+
+    <script>
+      // Nav scroll effect
+      const nav = document.getElementById("nav")
+      window.addEventListener(
+        "scroll",
+        () => {
+          nav.classList.toggle("scrolled", window.scrollY > 20)
+        },
+        { passive: true },
+      )
+
+      // Copy buttons
+      document.querySelectorAll(".copy-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const text = btn.dataset.copy
+          navigator.clipboard.writeText(text).then(() => {
+            const original = btn.textContent
+            btn.textContent = "Copied!"
+            setTimeout(() => {
+              btn.textContent = original
+            }, 1800)
+          })
+        })
+      })
+
+      // Scroll reveal
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible")
+              observer.unobserve(entry.target)
+            }
+          })
+        },
+        { threshold: 0.1, rootMargin: "0px 0px -40px 0px" },
+      )
+      document.querySelectorAll(".reveal").forEach((el) => observer.observe(el))
+    </script>
+  </body>
+</html>
