@@ -7,28 +7,31 @@ const API_BASE =
   process.env["MCP_BUGZILLA_BASE_URL"] ?? "https://bugzilla.mozilla.org/rest"
 const API_KEY = process.env["MCP_BUGZILLA_API_KEY"]
 
+export class BugzillaError extends Error {
+  constructor(
+    public status: number,
+    public body: string,
+  ) {
+    super(`Bugzilla API error ${status}: ${body}`)
+  }
+}
+
 export const apiFetch = async <T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T | null> => {
-  try {
-    const headers: Record<string, string> = {
-      "Content-Type": "application/json",
-      ...(options.headers as Record<string, string>),
-    }
-    if (API_KEY) headers["X-BUGZILLA-API-KEY"] = API_KEY
-
-    const response = await fetch(`${API_BASE}${path}`, { ...options, headers })
-    if (!response.ok) {
-      const body = await response.text()
-      console.error(`Bugzilla API error ${response.status} ${path}: ${body}`)
-      return null
-    }
-    return (await response.json()) as T
-  } catch (e) {
-    console.error(`Fetch failed: ${path}`, e)
-    return null
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...(options.headers as Record<string, string>),
   }
+  if (API_KEY) headers["X-BUGZILLA-API-KEY"] = API_KEY
+
+  const response = await fetch(`${API_BASE}${path}`, { ...options, headers })
+  if (!response.ok) {
+    const body = await response.text()
+    throw new BugzillaError(response.status, body)
+  }
+  return (await response.json()) as T
 }
 
 export const ok = (data: unknown) => ({
@@ -74,6 +77,7 @@ export const createBug = async (params: {
   component: string
   summary: string
   version: string
+  type?: "defect" | "enhancement" | "task"
   description?: string
   severity?: string
   priority?: string
@@ -86,11 +90,15 @@ export const createBug = async (params: {
   target_milestone?: string
 }) => {
   if (!API_KEY) return err("MCP_BUGZILLA_API_KEY is required to create bugs")
-  const data = await apiFetch<{ id: number }>("/bug", {
-    method: "POST",
-    body: JSON.stringify(params),
-  })
-  return data?.id ? ok({ id: data.id }) : err("failed to create bug")
+  try {
+    const data = await apiFetch<{ id: number }>("/bug", {
+      method: "POST",
+      body: JSON.stringify(params),
+    })
+    return data?.id ? ok({ id: data.id }) : err("failed to create bug")
+  } catch (e) {
+    return err(e instanceof Error ? e.message : "failed to create bug")
+  }
 }
 
 export const updateBug = async (params: {
@@ -109,11 +117,15 @@ export const updateBug = async (params: {
 }) => {
   if (!API_KEY) return err("MCP_BUGZILLA_API_KEY is required to update bugs")
   const { id, ...fields } = params
-  const data = await apiFetch<{ bugs: unknown[] }>(`/bug/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(fields),
-  })
-  return data?.bugs ? ok(data.bugs) : err(`failed to update bug ${id}`)
+  try {
+    const data = await apiFetch<{ bugs: unknown[] }>(`/bug/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(fields),
+    })
+    return data?.bugs ? ok(data.bugs) : err(`failed to update bug ${id}`)
+  } catch (e) {
+    return err(e instanceof Error ? e.message : `failed to update bug ${id}`)
+  }
 }
 
 export const getBugHistory = async ({ id }: { id: string }) => {
@@ -147,11 +159,15 @@ export const createComment = async (params: {
 }) => {
   if (!API_KEY) return err("MCP_BUGZILLA_API_KEY is required to post comments")
   const { id, ...body } = params
-  const data = await apiFetch<{ id: number }>(`/bug/${id}/comment`, {
-    method: "POST",
-    body: JSON.stringify(body),
-  })
-  return data?.id ? ok({ id: data.id }) : err("failed to create comment")
+  try {
+    const data = await apiFetch<{ id: number }>(`/bug/${id}/comment`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    })
+    return data?.id ? ok({ id: data.id }) : err("failed to create comment")
+  } catch (e) {
+    return err(e instanceof Error ? e.message : "failed to create comment")
+  }
 }
 
 export const searchCommentTags = async ({
@@ -208,13 +224,17 @@ export const createAttachment = async (params: {
   if (!API_KEY)
     return err("MCP_BUGZILLA_API_KEY is required to create attachments")
   const { id, ...body } = params
-  const result = await apiFetch<{ ids: number[] }>(`/bug/${id}/attachment`, {
-    method: "POST",
-    body: JSON.stringify({ ...body, ids: [id] }),
-  })
-  return result?.ids
-    ? ok({ ids: result.ids })
-    : err("failed to create attachment")
+  try {
+    const result = await apiFetch<{ ids: number[] }>(`/bug/${id}/attachment`, {
+      method: "POST",
+      body: JSON.stringify({ ...body, ids: [id] }),
+    })
+    return result?.ids
+      ? ok({ ids: result.ids })
+      : err("failed to create attachment")
+  } catch (e) {
+    return err(e instanceof Error ? e.message : "failed to create attachment")
+  }
 }
 
 export const updateAttachment = async (params: {
@@ -368,6 +388,10 @@ server.registerTool(
       component: z.string().describe("Component name"),
       summary: z.string().describe("One-line bug summary"),
       version: z.string().describe("Product version affected"),
+      type: z
+        .enum(["defect", "enhancement", "task"])
+        .optional()
+        .describe("Bug type (defect, enhancement or task)"),
       description: z.string().optional().describe("Detailed description"),
       severity: z.string().optional().describe("Severity level"),
       priority: z.string().optional().describe("Priority level"),
