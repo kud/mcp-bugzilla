@@ -81,7 +81,7 @@ npm install && npm run build
 ---
 
 <details>
-<summary>### 🖥️ Claude Code CLI</summary>
+<summary>🖥️ Claude Code CLI</summary>
 
 ```bash
 claude mcp add mcp-bugzilla -- npx -y @kud/mcp-bugzilla
@@ -97,7 +97,7 @@ claude mcp add mcp-bugzilla -e MCP_BUGZILLA_API_KEY=your-key -- npx -y @kud/mcp-
 </details>
 
 <details>
-<summary>### 🖥️ Claude Desktop (macOS + Windows)</summary>
+<summary>🖥️ Claude Desktop (macOS + Windows)</summary>
 
 Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
 
@@ -118,7 +118,7 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) o
 </details>
 
 <details>
-<summary>### 🖱️ Cursor</summary>
+<summary>🖱️ Cursor</summary>
 
 In Cursor settings → MCP → Add server:
 
@@ -135,7 +135,7 @@ In Cursor settings → MCP → Add server:
 </details>
 
 <details>
-<summary>### 🌊 Windsurf</summary>
+<summary>🌊 Windsurf</summary>
 
 In `~/.codeium/windsurf/mcp_config.json`:
 
@@ -154,7 +154,7 @@ In `~/.codeium/windsurf/mcp_config.json`:
 </details>
 
 <details>
-<summary>### 🟦 VSCode</summary>
+<summary>🟦 VSCode</summary>
 
 In `.vscode/mcp.json`:
 
