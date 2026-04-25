@@ -4,6 +4,19 @@ All notable changes to this project are documented here.
 
 ---
 
+## [Unreleased] — 2026-04-25
+
+### Bug Fixes
+
+- Add BugzillaError exception class and improve error handling in write handlers ([c6eca91](https://github.com/kud/mcp-bugzilla/commit/c6eca91))
+
+<details>
+<summary>Internal changes (1 commit)</summary>
+
+- Rename mcpServers key for cleaner tool picker display ([78a4f2d](https://github.com/kud/mcp-bugzilla/commit/78a4f2d))
+
+</details>
+
 ## [1.1.0] — 2026-04-25
 
 ### Features
