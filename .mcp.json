@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "mcp-bugzilla": {
+    "bugzilla": {
       "command": "npx",
       "args": ["tsx", "src/index.ts"]
     }
