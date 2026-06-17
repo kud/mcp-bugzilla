@@ -25,18 +25,13 @@
 
 ---
 
-An MCP server for Bugzilla — search, discuss, and manage Firefox/Mozilla bugs via the Bugzilla REST API. Read-only without a key; create, update, and comment with an API key.
+## Install
 
-## ✨ Features
+```bash
+npx @kud/mcp-bugzilla
+```
 
-- 🔑 **Optional auth** — read-only without a key; create/update/comment with an API key
-- 🛠️ **12 tools** covering bugs, comments, history, attachments, products, users, and fields
-- 🦊 **Mozilla-first** — defaults to `https://bugzilla.mozilla.org/rest`, configurable via env var
-- 🔍 **Powerful search** — filter by product, component, status, severity, assignee, or quicksearch syntax
-- 💬 **Full discussion flow** — read comments, post replies, attach work-time logs
-- 📎 **Attachment listing** — inspect patches and test files linked to any bug
-
-## 🚀 Install
+Or register it with Claude Desktop:
 
 ```json
 {
@@ -52,18 +47,27 @@ An MCP server for Bugzilla — search, discuss, and manage Firefox/Mozilla bugs 
 }
 ```
 
-## 📖 Documentation
+Read-only without a key; add `MCP_BUGZILLA_API_KEY` to create, update, and
+comment. Per-editor guides live in the docs.
 
-Full tool reference, usage, and configuration live on the docs site:
+## Development
 
-**→ [kud.io/projects/mcp-bugzilla/docs](https://kud.io/projects/mcp-bugzilla/docs)**
+```bash
+npm install
+npm run build      # compile TypeScript to dist/
+npm test           # run the test suite
+npm run typecheck  # type-check without emitting
+npm run inspect:dev # open MCP Inspector against source
+```
 
-## 🔧 Development
-
-1. Run `npm run typecheck` and `npm test` — both must pass
-2. Run `npm run build` — verify `dist/` compiles cleanly
-3. Follow the existing tool handler pattern: exported arrow function → registered with `server.registerTool`
+Follow the existing tool handler pattern: an exported arrow function registered
+with `server.registerTool`. Run `npm run typecheck` and `npm test` before
+committing.
 
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+---
+
+📚 **Full documentation → https://kud.io/projects/mcp-bugzilla/docs**
